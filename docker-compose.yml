@@ -1,0 +1,47 @@
+version: "3.5"
+services:
+  server1:
+    container_name: server1
+    build: .
+    ports:
+      - "3001:3030"
+    environment:
+      - MESSAGE=halo
+      - HOST=mongo
+      - DB=test
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+    volumes:
+      - ./:/usr/src/app
+      - ./node_modules:/usr/src/app/node_modules
+    networks:
+      - backend
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx/
+    ports:
+      - "3030:80"
+    networks:
+      - backend
+  
+  mongodb:
+    container_name: mongo
+    image: mvertes/alpine-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - backend
+  
+  redis:
+    container_name: redis
+    image: redis:4.0.8-alpine
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+
